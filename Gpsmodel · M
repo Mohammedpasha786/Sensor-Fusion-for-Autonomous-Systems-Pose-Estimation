@@ -1,0 +1,33 @@
+function gps = gpsModel(params)
+% GPSMODEL  Configure a gpsSensor object from the sensor_params.yaml
+%   configuration.
+%
+%   gps = gpsModel(params)
+%
+%   Input:
+%     params - sensor parameters struct (from loadConfig), expects
+%              params.gps.{sample_rate, horizontal_position_std,
+%                           vertical_position_std, velocity_std,
+%                           decay_factor, reference_location}
+%
+%   Output:
+%     gps    - configured gpsSensor object (Navigation Toolbox)
+%
+%   Usage:
+%     gps = gpsModel(sensorParams);
+%     [lla, vel] = gps(truePositionNED, trueVelocityNED);
+
+    gpsParams = params.gps;
+
+    gps = gpsSensor('SampleRate', gpsParams.sample_rate);
+    gps.ReferenceLocation     = gpsParams.reference_location;   % [lat lon alt]
+    gps.HorizontalPositionAccuracy = gpsParams.horizontal_position_std;
+    gps.VerticalPositionAccuracy   = gpsParams.vertical_position_std;
+    gps.VelocityAccuracy           = gpsParams.velocity_std;
+    gps.DecayFactor                = gpsParams.decay_factor;
+
+    fprintf('  GPS model configured: %.1f Hz, h_std=%.2f m, v_std=%.2f m, ref=[%.4f, %.4f, %.0f]\n', ...
+            gpsParams.sample_rate, gpsParams.horizontal_position_std, ...
+            gpsParams.vertical_position_std, gpsParams.reference_location(1), ...
+            gpsParams.reference_location(2), gpsParams.reference_location(3));
+end
